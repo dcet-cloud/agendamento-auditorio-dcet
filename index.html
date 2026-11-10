@@ -1,0 +1,321 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendamento do Auditório | DCET/UNIFAP</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f5f8;
+      color: #263445;
+    }
+
+    header {
+      background: #123d32;
+      color: white;
+      padding: 28px 20px;
+    }
+
+    .header-content {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    header h1 {
+      font-size: 25px;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: #d9e9e1;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 18px;
+    }
+
+    .intro {
+      margin-bottom: 24px;
+    }
+
+    .intro h2 {
+      font-size: 23px;
+      margin-bottom: 8px;
+    }
+
+    .intro p {
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    .calendar {
+      background: white;
+      padding: 22px;
+      border-radius: 12px;
+      box-shadow: 0 3px 15px #0000000c;
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      gap: 12px;
+    }
+
+    .calendar-header h3 {
+      font-size: 20px;
+      text-transform: capitalize;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 7px;
+      padding: 10px 15px;
+      font-size: 14px;
+    }
+
+    .nav-button {
+      background: #e8eee9;
+      color: #123d32;
+      font-weight: bold;
+    }
+
+    .weekdays, .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 7px;
+    }
+
+    .weekdays div {
+      text-align: center;
+      font-weight: bold;
+      color: #64748b;
+      padding: 12px 0;
+      font-size: 13px;
+    }
+
+    .day {
+      min-height: 85px;
+      padding: 10px;
+      border: 1px solid #e5e9ef;
+      border-radius: 7px;
+      background: #fff;
+      font-size: 14px;
+    }
+
+    .day.today {
+      border: 2px solid #23845d;
+      background: #f0f8f3;
+    }
+
+    .day.empty {
+      background: #f8fafc;
+      border-color: transparent;
+    }
+
+    .legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .legend span {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #23845d;
+    }
+
+    .dot.reserved {
+      background: #dc9140;
+    }
+
+    .info {
+      margin-top: 22px;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      line-height: 1.8;
+    }
+
+    .info h3 {
+      margin-bottom: 8px;
+      color: #123d32;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 20px;
+      }
+
+      .calendar {
+        padding: 12px;
+      }
+
+      .day {
+        min-height: 55px;
+        padding: 6px;
+      }
+
+      .weekdays div {
+        font-size: 11px;
+      }
+
+      .calendar-header h3 {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="header-content">
+      <h1>Agendamento do Auditório</h1>
+      <p>Departamento de Ciências Exatas e Tecnológicas – DCET/UNIFAP</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h2>Calendário de Reservas</h2>
+      <p>
+        Consulte a disponibilidade do Auditório do DCET
+        e acompanhe a programação de atividades.
+      </p>
+    </section>
+
+    <section class="calendar">
+      <div class="calendar-header">
+        <button class="nav-button" onclick="changeMonth(-1)">
+          &#10094;
+        </button>
+
+        <h3 id="monthYear"></h3>
+
+        <button class="nav-button" onclick="changeMonth(1)">
+          &#10095;
+        </button>
+      </div>
+
+      <div class="weekdays">
+        <div>Dom</div>
+        <div>Seg</div>
+        <div>Ter</div>
+        <div>Qua</div>
+        <div>Qui</div>
+        <div>Sex</div>
+        <div>Sáb</div>
+      </div>
+
+      <div class="days" id="calendarDays"></div>
+
+      <div class="legend">
+        <span><i class="dot"></i> Disponível</span>
+        <span><i class="dot reserved"></i> Reservado</span>
+      </div>
+    </section>
+
+    <section class="info">
+      <h3>Sobre os agendamentos</h3>
+      <p>
+        O uso do auditório está sujeito à análise e aprovação
+        da Direção do DCET.
+      </p>
+      <p>
+        As solicitações deverão ser realizadas por meio
+        do formulário eletrônico de agendamento.
+      </p>
+      <p><strong>DCET – Universidade Federal do Amapá</strong></p>
+    </section>
+  </main>
+
+  <footer>
+    Departamento de Ciências Exatas e Tecnológicas – UNIFAP
+  </footer>
+
+  <script>
+    let currentDate = new Date();
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDay = new Date(year, month + 1, 0).getDate();
+
+      document.getElementById("monthYear").textContent =
+        new Date(year, month).toLocaleDateString("pt-BR", {
+          month: "long",
+          year: "numeric"
+        });
+
+      const container = document.getElementById("calendarDays");
+      container.innerHTML = "";
+
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement("div");
+        empty.className = "day empty";
+        container.appendChild(empty);
+      }
+
+      const today = new Date();
+
+      for (let day = 1; day <= lastDay; day++) {
+        const cell = document.createElement("div");
+        cell.className = "day";
+
+        if (
+          day === today.getDate() &&
+          month === today.getMonth() &&
+          year === today.getFullYear()
+        ) {
+          cell.classList.add("today");
+        }
+
+        cell.textContent = day;
+        container.appendChild(cell);
+      }
+    }
+
+    function changeMonth(direction) {
+      currentDate.setMonth(currentDate.getMonth() + direction);
+      renderCalendar();
+    }
+
+    renderCalendar();
+  </script>
+
+</body>
+</html>
